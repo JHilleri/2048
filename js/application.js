@@ -6,7 +6,7 @@ window.requestAnimationFrame(function () {
 async function register_worker() {
   if ('serviceWorker' in navigator) {
       try {
-          var registered = await navigator.serviceWorker.register('../sw.js', { scope: '/2048' });
+          var registered = await navigator.serviceWorker.register('/2048/sw.js', { scope: '/2048' });
           console.log('ServiceWorker registration succeeded. Scope is' + registered.scope);
       }
       catch (error) {
