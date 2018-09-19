@@ -26,11 +26,11 @@ self.addEventListener('install', function (e) {
 //   );
 // });
 
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', function (event) {
   console.log('Gestion de l\'évènement de fetch pour', event.request.url);
 
   event.respondWith(
-    caches.match(event.request).then(function(response) {
+    caches.match(event.request).then(function (response) {
       if (response) {
         console.log('Réponse trouvée en cache:', response);
 
@@ -38,11 +38,20 @@ self.addEventListener('fetch', function(event) {
       }
       console.log('Pas de réponse trouvée en cache. Sur le point de la récupérer via le réseau...');
 
-      return fetch(event.request).then(function(response) {
+      return fetch(event.request).then(function (response) {
         console.log('La réponse du réseau est:', response);
 
         return response;
-      }).catch(function(error) {
+      }).then(
+        function (response) {
+          var responseToCache = response.clone();
+
+          caches.open(cacheName)
+            .then(function (cache) {
+              cache.put(event.request, responseToCache);
+            });
+        }
+      ).catch(function (error) {
         console.error('Récupération échouée:', error);
 
         throw error;
